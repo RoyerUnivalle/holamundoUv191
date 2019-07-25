@@ -136,7 +136,8 @@
                    },
                     statusCode: {
                         200: function () {
-                            $("#exampleModal").modal();
+                            //$("#exampleModal").modal();
+                            alert('exito con los contactos');
                         }
                     }
                 })
@@ -168,7 +169,7 @@
                 cell2.innerHTML = contacts[i].phoneNumbers[0];
             }
         }
-        funtion onError() {
+        function onError(contacError) {
             alert('error con los contactos');
         }
     </script>
