@@ -37,23 +37,140 @@
     * Create your own at http://cspisawesome.com
     -->
     <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: 'unsafe-inline' https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *" /> -->
-
+<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
     <link rel="stylesheet" type="text/css" href="css/index.css" />
     <title>Hello World</title>
 </head>
 
 <body>
     <div class="app">
-        <h1>PhoneGap</h1>
-        <div id="deviceready" class="blink">
-            <p class="event listening">Connecting to Device</p>
-            <p class="event received">Device is Ready</p>
+        <div class="container">
+          <div class="row">
+            <div class="col">
+                <button class="btn btn-primary" onclick="javascript:hola();" type="button">Mensaje simple</button>
+            </div>
+            <div class="col">
+              <button class="btn btn-primary" onclick="javascript:leerMock(2);" type="button">Servicio load</button>
+            </div>
+              <div class="col">
+              <button class="btn btn-primary" onclick="javascript:leerMock(1);" type="button">Servicio</button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <button class="btn btn-primary" onclick="javascript:mostrarContactos();" type="button">Contactos</button>
+            </div>
+            <div class="col">
+              2 of 3
+            </div>
+            <div class="col">
+              3 of 3
+            </div>
+          </div>
         </div>
+        <!-- resultados -->
+        <div id="result">
+            Resultado aqui
+        </div>
+        
+        <table id="tableContactos">
+            <tr>
+                <td>Name</td>
+                <td>CellPhone</td>
+            </tr>
+        </table>
+        
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                ...
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
     </div>
+    
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="js/index.js"></script>
     <script type="text/javascript">
         app.initialize();
+        function hola(){
+            alert('hola mundo');
+        }
+        function leerMock(option){
+            if (option == 1) {
+                $.ajax({
+                   url:"http://www.mocky.io/v2/5d39a3df2f000071006ebcf8",
+                   success: function (result){
+                       var htmlResult = "<table class='table' border='1' id='resultado'>";
+                       htmlResult += "<tr>";
+                       htmlResult += "<th>Id</th>";
+                       htmlResult += "<th>Name</th>";
+                       htmlResult += "<th>College</th>";
+                       htmlResult += "</tr>";
+                       for (i in result.students){
+                           htmlResult += "<tr>";
+                           htmlResult += "<td>"+result.students[i].id+"</td>";
+                           htmlResult += "<td>"+result.students[i].name+"</td>";
+                           htmlResult += "<td>"+result.students[i].college+"</td>";
+                           htmlResult += "</tr>";
+                       }
+                       htmlResult += "</table>";
+                       document.getElementById('result').innerHTML= htmlResult;
+
+                   },
+                    statusCode: {
+                        200: function () {
+                            $("#exampleModal").modal();
+                        }
+                    }
+                })
+            } else if (option == 2) {
+                $('#result').load('http://www.mocky.io/v2/5d39a3df2f000071006ebcf8');
+            }
+           
+        }
+        
+        function mostrarContactos(){
+            var options = new ContactFindOptions();
+            options.filter   = "María";
+            options.multiple = true;
+            options.desiredFields = [navigator.contacts.fieldType.id];
+            options.hasPhoneNumber = true;
+            var fields       = [navigator.contacts.fieldType.displayName, navigator.contacts.fieldType.name];
+            //BUSCAR CONTACTOS
+            navigator.contacts.find(fields, onSuccess, onError, options);
+        }
+        function onSuccess(contacts) {
+            alert(contacts.length);
+            console.log(contacts.length);
+            var table = document.getElementById("tableContactos");
+            for (var i = 0; i <= contacts.length; i++){
+                var row = table.insertRow(0);
+                var cell1 = table.insertCell(0);
+                var cell2 = table.insertCell(1);
+                cell1.innerHTML = contacts[i].displayName;
+                cell2.innerHTML = contacts[i].phoneNumbers[0];
+            }
+        }
+        funtion onError() {
+            alert('error con los contactos');
+        }
     </script>
 </body>
 
